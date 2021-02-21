@@ -2,6 +2,9 @@ from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
 from collections import ChainMap
+import csv
+from datetime import datetime
+import re
 
 options = Options()
 options.headless = True
@@ -22,4 +25,8 @@ for param in params:
         json_data_list.append(output.copy())
     output_res = dict(ChainMap(*json_data_list))
     output_res_arr.append(output_res.copy())
-print(output_res_arr)
+timestamp = datetime.now().strftime("%d-%b-%Y-%H:%M:%S.%f")
+with open('finviz-'+timestamp+'.csv', 'w', encoding='utf8', newline='') as output_file:
+    fc = csv.DictWriter(output_file, fieldnames=output_res_arr[0].keys(),)
+    fc.writeheader()
+    fc.writerows(output_res_arr)
